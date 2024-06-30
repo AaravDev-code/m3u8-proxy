@@ -139,7 +139,7 @@ function onProxyResponse(proxy, proxyReq, proxyRes, req, res) {
                     // may occur after aborting a request does not propagate to res.
                     // https://github.com/nodejitsu/node-http-proxy/blob/v1.11.1/lib/http-proxy/passes/web-incoming.js#L134
                     proxyReq.removeAllListeners("error");
-                    proxyReq.once("error", function catchAndIgnoreError() {});
+                    proxyReq.once("error", function catchAndIgnoreError() { });
                     proxyReq.abort();
 
                     // Initiate a new proxy request.
@@ -496,7 +496,7 @@ function createRateLimitChecker(CORSANYWHERE_RATELIMIT) {
     const rateLimitConfig = /^(\d+) (\d+)(?:\s*$|\s+(.+)$)/.exec(CORSANYWHERE_RATELIMIT);
     if (!rateLimitConfig) {
         // No rate limit by default.
-        return function checkRateLimit() {};
+        return function checkRateLimit() { };
     }
     const maxRequestsPerPeriod = parseInt(rateLimitConfig[1]);
     const periodInMinutes = parseInt(rateLimitConfig[2]);
@@ -663,11 +663,14 @@ export async function proxyTs(url: string, headers: any, req, res: http.ServerRe
         },
     };
 
+    res.setHeader("Access-Control-Allow-Origin", "*");
+
     // Proxy request and pipe to client
     try {
         if (forceHTTPS) {
             const proxy = https.request(options, (r) => {
                 r.headers["content-type"] = "video/mp2t";
+                r.headers["Access-Control-Allow-Origin"] = "*";
                 res.writeHead(r.statusCode ?? 200, r.headers);
 
                 r.pipe(res, {

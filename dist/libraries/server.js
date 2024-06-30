@@ -613,11 +613,13 @@ async function proxyTs(url, headers, req, res) {
             ...headers,
         },
     };
+
     // Proxy request and pipe to client
     try {
         if (forceHTTPS) {
             const proxy = node_https_1.default.request(options, (r) => {
                 r.headers["content-type"] = "video/mp2t";
+                r.headers["Access-Control-Allow-Origin"] = "*";
                 res.writeHead(r.statusCode ?? 200, r.headers);
                 r.pipe(res, {
                     end: true,
@@ -630,6 +632,7 @@ async function proxyTs(url, headers, req, res) {
         else {
             const proxy = node_http_1.default.request(options, (r) => {
                 r.headers["content-type"] = "video/mp2t";
+                r.headers["Access-Control-Allow-Origin"] = "*";
                 res.writeHead(r.statusCode ?? 200, r.headers);
                 r.pipe(res, {
                     end: true,
